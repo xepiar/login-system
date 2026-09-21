@@ -7,33 +7,8 @@ require("dotenv").config();
 
 const app = express();
 
-// Enable CORS for all origins and routes cleanly
+// Global CORS Middleware - NO wildcards/asterisks here
 app.use(cors());
-
-app.use(express.json());
-// Configure CORS
-const allowedOrigins = [
-  "https://gabrieljerome.vercel.app",
-  "http://localhost:5500",
-  "http://127.0.0.1:5500",
-  "http://localhost:3000"
-];
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin) || process.env.FRONTEND_URL === "*") {
-      return callback(null, true);
-    }
-    return callback(null, true);
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-};
-
-// Enable CORS for all routes and handle preflight OPTIONS requests explicitly
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
