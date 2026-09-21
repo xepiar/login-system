@@ -7,6 +7,10 @@ require("dotenv").config();
 
 const app = express();
 
+// Enable CORS for all origins and routes cleanly
+app.use(cors());
+
+app.use(express.json());
 // Configure CORS
 const allowedOrigins = [
   "https://gabrieljerome.vercel.app",
