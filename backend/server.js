@@ -7,14 +7,28 @@ require("dotenv").config();
 
 const app = express();
 
-// Configure CORS for Vercel Frontend
+// Configure CORS for local development and live Vercel frontend
+const allowedOrigins = [
+  "https://gabrieljerome.vercel.app",
+  "http://localhost:5500",
+  "http://127.0.0.1:5500",
+  "http://localhost:3000"
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "*",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, curl, or Postman)
+      if (!origin || allowedOrigins.includes(origin) || process.env.FRONTEND_URL === "*") {
+        return callback(null, true);
+      }
+      return callback(null, true); // Fallback to allow connection
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
-
-app.use(cors());
 
 app.use(express.json());
 
@@ -127,6 +141,8 @@ app.get("/api/profile", async (req, res) => {
 // Connect Database and Start Server
 const PORT = process.env.PORT || 5000;
 
+
+
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
@@ -135,7 +151,7 @@ mongoose
       console.log(`Server running on port ${PORT}`);
     });
   })
+  
+  
   .catch((error) => {
-    console.error("MongoDB connection failed:", error);
-  });
-
+    console.error("MongoDB connection failed:", error);});
