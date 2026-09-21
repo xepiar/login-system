@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="card">
+    <h1>Dashboard</h1>
+    <div id="welcome">Loading user details...</div>
+    <button id="logoutBtn" onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:5000";
+
+    // Check authentication and display user details on load
+    async function loadDashboard() {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        window.location.href = "./index.html";
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/profile`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error("Unauthorized");
+        }
+
+        document.getElementById("welcome").innerHTML = `
+          Welcome, <strong>${data.user.name}</strong><br>
+          <span style="font-size: 13px; color: var(--text-sub);">(${data.user.email})</span>
+        `;
+      } catch (error) {
+        localStorage.removeItem("token");
+        window.location.href = "./index.html";
+      }
+    }
+
+function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  window.location.href = "index.html";
+}
+
+    // Load data when page loads
+    loadDashboard();
+  </script>
+</body>
+</html>
