@@ -2,27 +2,24 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
 
-// Custom CORS Header Middleware
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+// Enable Trust Proxy for Render
+app.set("trust proxy", 1);
 
-  // Handle browser OPTIONS preflight request directly
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
+// Configure CORS
+const corsOptions = {
+  origin: true, // Dynamically reflect request origin
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  credentials: true,
+  optionsSuccessStatus: 200 // For legacy browsers/proxies
+};
 
-  next();
-});
-
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // User MongoDB Schema
@@ -145,3 +142,4 @@ mongoose
   .catch((error) => {
     console.error("MongoDB connection failed:", error);
   });
+  
