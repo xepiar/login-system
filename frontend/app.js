@@ -1,6 +1,5 @@
-// Change this to your deployed Render URL when pushing to production
-// e.g., const API_URL = "https://your-api.onrender.com";
-const API_URL = "http://localhost:5000";
+
+const API_URL = "https://login-system-1dht.onrender.com";
 
 // DOM Elements
 const loginSection = document.getElementById("loginSection");
