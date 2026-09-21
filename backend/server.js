@@ -7,8 +7,14 @@ require("dotenv").config();
 
 const app = express();
 
-// Global CORS Middleware - NO wildcards/asterisks here
-app.use(cors());
+// Explicit CORS middleware setup
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+
 
 app.use(express.json());
 
