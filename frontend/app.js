@@ -1,6 +1,4 @@
-//app.js
-
-const API_URL = "https://login-system-1dht.onrender.com";
+const API_URL = "https://login-system-ldht.onrender.com";
 
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
