@@ -1,97 +1,81 @@
 
 const API_URL = "https://login-system-1dht.onrender.com";
 
-// DOM Elements
-const loginSection = document.getElementById("loginSection");
+// Register Form Handler
 const registerForm = document.getElementById("registerForm");
-const showRegisterLink = document.getElementById("showRegister");
-const showLoginLink = document.getElementById("showLogin");
-
-const loginForm = document.getElementById("loginForm");
-const messageEl = document.getElementById("message");
-const registerMessageEl = document.getElementById("registerMessage");
-
-// Switch to Register Form
-showRegisterLink.addEventListener("click", (e) => {
-  e.preventDefault();
-  loginSection.classList.add("hidden");
-  registerForm.classList.remove("hidden");
-});
-
-// Switch back to Login Form
-if (showLoginLink) {
-  showLoginLink.addEventListener("click", (e) => {
+if (registerForm) {
+  registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    registerForm.classList.add("hidden");
-    loginSection.classList.remove("hidden");
+
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const errorMessage = document.getElementById("errorMessage");
+
+    try {
+      const response = await fetch(`${API_URL}/api/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed");
+      }
+
+      alert("Registration successful! Please log in.");
+      window.location.href = "login.html";
+    } catch (err) {
+      if (errorMessage) {
+        errorMessage.textContent = err.message;
+      } else {
+        alert(err.message);
+      }
+    }
   });
 }
 
-// Handle Registration
-registerForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  registerMessageEl.textContent = "";
+// Login Form Handler
+const loginForm = document.getElementById("loginForm");
+if (loginForm) {
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("regEmail").value.trim();
-  const password = document.getElementById("regPassword").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const errorMessage = document.getElementById("errorMessage");
 
-  try {
-    const response = await fetch(`${API_URL}/api/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
+    try {
+      const response = await fetch(`${API_URL}/api/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.message || "Registration failed.");
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      // Save token and user info in localStorage
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      if (errorMessage) {
+        errorMessage.textContent = err.message;
+      } else {
+        alert(err.message);
+      }
     }
-
-    registerMessageEl.style.color = "green";
-    registerMessageEl.textContent = "Registration successful! Redirecting to login...";
-    
-    // Auto switch to login form after 1.5 seconds
-    setTimeout(() => {
-      registerForm.reset();
-      registerMessageEl.textContent = "";
-      registerForm.classList.add("hidden");
-      loginSection.classList.remove("hidden");
-    }, 1500);
-
-  } catch (error) {
-    registerMessageEl.style.color = "red";
-    registerMessageEl.textContent = error.message;
-  }
-});
-
-// Handle Login
-loginForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  messageEl.textContent = "";
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  try {
-    const response = await fetch(`${API_URL}/api/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Login failed.");
-    }
-
-    localStorage.setItem("token", data.token);
-    window.location.href = "dashboard.html";
-  } catch (error) {
-    messageEl.style.color = "red";
-    messageEl.textContent = error.message;
-  }
-});
+  });
+}
 

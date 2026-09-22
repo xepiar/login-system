@@ -4,59 +4,81 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #1a1a1a;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #2a2a2a;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 320px;
+      text-align: center;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      background: #e63946;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
   <div class="card">
-    <h1>Dashboard</h1>
-    <div id="welcome">Loading user details...</div>
-    <button id="logoutBtn" onclick="logout()">Logout</button>
+    <h2>Welcome to Dashboard</h2>
+    <p id="userInfo">Loading user profile...</p>
+    <button id="logoutBtn">Log Out</button>
   </div>
 
   <script>
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://login-system-1dht.onrender.com";
+    const token = localStorage.getItem("token");
 
-    // Check authentication and display user details on load
-    async function loadDashboard() {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        window.location.href = "./index.html";
-        return;
-      }
-
-      try {
-        const response = await fetch(`${API_URL}/api/profile`, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error("Unauthorized");
+    // Redirect to login if token is missing
+    if (!token) {
+      window.location.href = "login.html";
+    } else {
+      // Fetch protected user profile
+      fetch(`${API_URL}/api/profile`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
         }
-
-        document.getElementById("welcome").innerHTML = `
-          Welcome, <strong>${data.user.name}</strong><br>
-          <span style="font-size: 13px; color: var(--text-sub);">(${data.user.email})</span>
-        `;
-      } catch (error) {
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Session expired");
+        return res.json();
+      })
+      .then(data => {
+        document.getElementById("userInfo").innerHTML = 
+          `<strong>Name:</strong> ${data.user.name}<br><strong>Email:</strong> ${data.user.email}`;
+      })
+      .catch(err => {
         localStorage.removeItem("token");
-        window.location.href = "./index.html";
-      }
+        localStorage.removeItem("user");
+        window.location.href = "login.html";
+      });
     }
 
-function logout() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  window.location.href = "index.html";
-}
-
-    // Load data when page loads
-    loadDashboard();
+    // Logout Action
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    });
   </script>
 </body>
 </html>

@@ -7,19 +7,31 @@ require("dotenv").config();
 
 const app = express();
 
-// Enable Trust Proxy for Render
+// Trust Render Reverse Proxy
 app.set("trust proxy", 1);
 
-// Configure CORS
-const corsOptions = {
-  origin: true, // Dynamically reflect request origin
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  credentials: true,
-  optionsSuccessStatus: 200 // For legacy browsers/proxies
-};
+// Configure CORS for Vercel
+const allowedOrigins = [
+  "https://gabrieljerome.vercel.app",
+  "http://localhost:5500",
+  "http://127.0.0.1:5500",
+  "http://localhost:3000"
+];
 
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin) || process.env.FRONTEND_URL === "*") {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 // User MongoDB Schema
@@ -131,6 +143,10 @@ app.get("/api/profile", async (req, res) => {
 // Connect Database and Start Server
 const PORT = process.env.PORT || 5000;
 
+if (!process.env.MONGODB_URI) {
+  console.error("CRITICAL ERROR: MONGODB_URI environment variable is missing!");
+}
+
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
@@ -140,6 +156,5 @@ mongoose
     });
   })
   .catch((error) => {
-    console.error("MongoDB connection failed:", error);
+    console.error("MongoDB connection failed:", error.message);
   });
-  
