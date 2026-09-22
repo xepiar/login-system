@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// API Root Health Endpoint
+// Root route for health check
 app.get("/", (req, res) => {
   res.json({ message: "Login API is running." });
 });
