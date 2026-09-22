@@ -140,21 +140,23 @@ app.get("/api/profile", async (req, res) => {
   }
 });
 
-// Connect Database and Start Server
+// Start Server Independent of Database Connection
 const PORT = process.env.PORT || 5000;
 
-if (!process.env.MONGODB_URI) {
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// Connect to MongoDB
+if (process.env.MONGODB_URI) {
+  mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => {
+      console.log("MongoDB connected successfully.");
+    })
+    .catch((error) => {
+      console.error("MongoDB connection failed:", error.message);
+    });
+} else {
   console.error("CRITICAL ERROR: MONGODB_URI environment variable is missing!");
 }
-
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log("MongoDB connected.");
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error("MongoDB connection failed:", error.message);
-  });

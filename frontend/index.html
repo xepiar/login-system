@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Login / Sign Up</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <main class="card">
-    <!-- Login Form -->
+    <!-- Login Section -->
     <div id="loginSection">
       <h1>Login</h1>
       <p class="subtitle">Log in with your account credentials</p>
@@ -25,28 +25,30 @@
         <p id="message"></p>
       </form>
 
-      <p>Don't have an account? <a href="#" id="showRegister">Sign Up</a></p>
+      <p>Don't have an account? <a href="#" id="showSignUp">Sign Up</a></p>
     </div>
 
-    <!-- Registration Form -->
-    <form id="registerForm" class="hidden">
+    <!-- Registration Section -->
+    <div id="registerSection" class="hidden">
       <h2>Sign Up</h2>
       <p class="subtitle">Create a new account</p>
-      
-      <label for="name">Name</label>
-      <input type="text" id="name" placeholder="Name" required autocomplete="name">
 
-      <label for="regEmail">Email</label>
-      <input type="email" id="regEmail" placeholder="Email" required autocomplete="email">
+      <form id="registerForm">
+        <label for="name">Name</label>
+        <input type="text" id="name" placeholder="Name" required autocomplete="name">
 
-      <label for="regPassword">Password</label>
-      <input type="password" id="regPassword" placeholder="Password (min 6 characters)" required minlength="6" autocomplete="new-password">
+        <label for="regEmail">Email</label>
+        <input type="email" id="regEmail" placeholder="Email" required autocomplete="email">
 
-      <button type="submit">Sign Up</button>
-      <p id="registerMessage"></p>
-      
+        <label for="regPassword">Password</label>
+        <input type="password" id="regPassword" placeholder="Password (min 6 characters)" required minlength="6" autocomplete="new-password">
+
+        <button type="submit">Sign Up</button>
+        <p id="registerMessage"></p>
+      </form>
+
       <p>Already have an account? <a href="#" id="showLogin">Log In</a></p>
-    </form>
+    </div>
   </main>
 
   <script src="app.js"></script>

@@ -1,16 +1,37 @@
-
 const API_URL = "https://login-system-1dht.onrender.com";
 
-// Register Form Handler
+// --- DOM ELEMENTS & SECTION TOGGLING ---
+const loginSection = document.getElementById("loginSection");
+const registerSection = document.getElementById("registerSection");
+const showSignUp = document.getElementById("showSignUp");
+const showLogin = document.getElementById("showLogin");
+
+if (showSignUp) {
+  showSignUp.addEventListener("click", (e) => {
+    e.preventDefault();
+    loginSection.classList.add("hidden");
+    registerSection.classList.remove("hidden");
+  });
+}
+
+if (showLogin) {
+  showLogin.addEventListener("click", (e) => {
+    e.preventDefault();
+    registerSection.classList.add("hidden");
+    loginSection.classList.remove("hidden");
+  });
+}
+
+// --- REGISTER FORM HANDLER ---
 const registerForm = document.getElementById("registerForm");
 if (registerForm) {
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const errorMessage = document.getElementById("errorMessage");
+    const email = document.getElementById("regEmail").value;
+    const password = document.getElementById("regPassword").value;
+    const registerMessage = document.getElementById("registerMessage");
 
     try {
       const response = await fetch(`${API_URL}/api/register`, {
@@ -28,10 +49,18 @@ if (registerForm) {
       }
 
       alert("Registration successful! Please log in.");
-      window.location.href = "login.html";
+      
+      // Clear form inputs
+      registerForm.reset();
+      if (registerMessage) registerMessage.textContent = "";
+
+      // Switch view back to Login section
+      registerSection.classList.add("hidden");
+      loginSection.classList.remove("hidden");
     } catch (err) {
-      if (errorMessage) {
-        errorMessage.textContent = err.message;
+      if (registerMessage) {
+        registerMessage.textContent = err.message;
+        registerMessage.style.color = "red";
       } else {
         alert(err.message);
       }
@@ -39,7 +68,7 @@ if (registerForm) {
   });
 }
 
-// Login Form Handler
+// --- LOGIN FORM HANDLER ---
 const loginForm = document.getElementById("loginForm");
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
@@ -47,7 +76,7 @@ if (loginForm) {
 
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const errorMessage = document.getElementById("errorMessage");
+    const message = document.getElementById("message");
 
     try {
       const response = await fetch(`${API_URL}/api/login`, {
@@ -70,12 +99,12 @@ if (loginForm) {
 
       window.location.href = "dashboard.html";
     } catch (err) {
-      if (errorMessage) {
-        errorMessage.textContent = err.message;
+      if (message) {
+        message.textContent = err.message;
+        message.style.color = "red";
       } else {
         alert(err.message);
       }
     }
   });
 }
-
