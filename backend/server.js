@@ -10,31 +10,22 @@ const app = express();
 // Trust Render Reverse Proxy
 app.set("trust proxy", 1);
 
-// Configure CORS for Vercel
-const allowedOrigins = [
-  "https://gabrieljerome.vercel.app",
-  "http://localhost:5500",
-  "http://127.0.0.1:5500",
-  "http://localhost:3000"
-];
-
+// Enable CORS for all incoming origins and handle OPTIONS preflight explicitly
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin) || process.env.FRONTEND_URL === "*") {
-        return callback(null, true);
-      }
-      return callback(null, true);
-    },
+    origin: true, // Dynamically allows the requesting origin (Vercel, localhost, 127.0.0.1)
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    credentials: true,
   })
 );
 
+// Explicitly handle preflight requests across all endpoints
+app.options("*", cors());
+
 app.use(express.json());
 
-// User MongoDB Schema
+// User Schema
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true, lowercase: true },
@@ -43,12 +34,12 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// API Health Check
+// API Root Health Endpoint
 app.get("/", (req, res) => {
   res.json({ message: "Login API is running." });
 });
 
-// User Registration Route
+// Registration Endpoint
 app.post("/api/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -76,16 +67,21 @@ app.post("/api/register", async (req, res) => {
       password: hashedPassword,
     });
 
-    res.status(201).json({ message: "Registration successful." });
+    return res.status(201).json({ message: "Registration successful." });
   } catch (error) {
-    res.status(500).json({ message: "Server error." });
+    console.error("Register Error:", error);
+    return res.status(500).json({ message: "Server error during registration." });
   }
 });
 
-// User Login Route
+// Login Endpoint
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password required." });
+    }
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -97,13 +93,15 @@ app.post("/api/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
+    const secret = process.env.JWT_SECRET || "fallback_secret";
+
     const token = jwt.sign(
       { userId: user._id, name: user.name, email: user.email },
-      process.env.JWT_SECRET,
+      secret,
       { expiresIn: "1h" }
     );
 
-    res.json({
+    return res.json({
       message: "Login successful.",
       token,
       user: {
@@ -112,11 +110,12 @@ app.post("/api/login", async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error." });
+    console.error("Login Error:", error);
+    return res.status(500).json({ message: "Server error during login." });
   }
 });
 
-// Protected Profile Route
+// Profile Endpoint
 app.get("/api/profile", async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
@@ -126,9 +125,10 @@ app.get("/api/profile", async (req, res) => {
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const secret = process.env.JWT_SECRET || "fallback_secret";
+    const decoded = jwt.verify(token, secret);
 
-    res.json({
+    return res.json({
       message: "Protected data.",
       user: {
         name: decoded.name,
@@ -136,27 +136,23 @@ app.get("/api/profile", async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(401).json({ message: "Invalid or expired token." });
+    return res.status(401).json({ message: "Invalid or expired token." });
   }
 });
 
-// Start Server Independent of Database Connection
+// Start Server Independent of Database Connection State
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });
 
-// Connect to MongoDB
+// Connect to MongoDB Atlas
 if (process.env.MONGODB_URI) {
   mongoose
     .connect(process.env.MONGODB_URI)
-    .then(() => {
-      console.log("MongoDB connected successfully.");
-    })
-    .catch((error) => {
-      console.error("MongoDB connection failed:", error.message);
-    });
+    .then(() => console.log("MongoDB connected successfully."))
+    .catch((err) => console.error("MongoDB connection error:", err.message));
 } else {
-  console.error("CRITICAL ERROR: MONGODB_URI environment variable is missing!");
+  console.error("MONGODB_URI environment variable is missing.");
 }
