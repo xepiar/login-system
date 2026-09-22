@@ -50,5 +50,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 function logout() {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
-  window.location.href = "front.html";
+  window.location.href = "index.html";
 }
