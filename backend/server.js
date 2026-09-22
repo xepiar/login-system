@@ -10,18 +10,15 @@ const app = express();
 // Trust Render Reverse Proxy
 app.set("trust proxy", 1);
 
-// Enable CORS for all incoming origins and handle OPTIONS preflight explicitly
+// Enable CORS for all incoming origins (including preflight)
 app.use(
   cors({
-    origin: true, // Dynamically allows the requesting origin (Vercel, localhost, 127.0.0.1)
+    origin: true, // Dynamically reflects requesting origin (Vercel, localhost, 127.0.0.1)
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
-
-// Explicitly handle preflight requests across all endpoints
-app.options("*", cors());
 
 app.use(express.json());
 
@@ -140,7 +137,7 @@ app.get("/api/profile", async (req, res) => {
   }
 });
 
-// Start Server Independent of Database Connection State
+// Start Server
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
