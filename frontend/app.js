@@ -1,16 +1,34 @@
 const API_URL = "https://login-system-ldht.onrender.com";
 
+// Elements
+const loginCard = document.getElementById("loginCard");
+const registerCard = document.getElementById("registerCard");
+
+const showRegister = document.getElementById("showRegister");
+const showLogin = document.getElementById("showLogin");
+
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
-const showRegister = document.getElementById("showRegister");
 
+// Switch to Register Card Box
 if (showRegister) {
   showRegister.addEventListener("click", (e) => {
     e.preventDefault();
-    registerForm.classList.toggle("hidden");
+    loginCard.classList.add("hidden");
+    registerCard.classList.remove("hidden");
   });
 }
 
+// Switch back to Login Card Box
+if (showLogin) {
+  showLogin.addEventListener("click", (e) => {
+    e.preventDefault();
+    registerCard.classList.add("hidden");
+    loginCard.classList.remove("hidden");
+  });
+}
+
+// Login Handler
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -37,6 +55,7 @@ if (loginForm) {
   });
 }
 
+// Registration Handler
 if (registerForm) {
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();

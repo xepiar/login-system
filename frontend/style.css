@@ -1,43 +1,57 @@
-
-
-* { box-sizing: border-box; 
+* { 
+    box-sizing: border-box; 
     font-family: Arial, sans-serif; 
 }
 
-body { margin: 0; 
+body { 
+    margin: 0; 
     min-height: 100vh; 
     display: flex; 
     justify-content: center; 
     align-items: center; 
-    background: #f2f4f7; 
+    background: #121212; 
+    color: #e0e0e0;
 }
 
-.card { width: 380px; 
+.card { 
+    width: 380px; 
     max-width: 90%; 
     padding: 32px; 
-    background: white; 
+    background: #1e1e24; 
     border-radius: 12px; 
-    box-shadow: 0 8px 30px rgba(0,0,0,.10); 
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); 
+    border: 1px solid #2d2d35;
 }
 
 h1, h2 {
-     margin-top: 0; 
-    }
+    margin-top: 0; 
+    color: #ffffff;
+}
 
 .subtitle { 
-    color: #666; 
+    color: #a0a0a0; 
 }
 
 label { 
     display: block; 
     margin: 14px 0 6px; 
+    color: #cccccc;
+    font-size: 14px;
 }
 
 input { 
     width: 100%; 
     padding: 12px; 
-    border: 1px solid #ccc; 
+    background: #141418;
+    color: #ffffff;
+    border: 1px solid #3a3a45; 
     border-radius: 6px; 
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+input:focus {
+    border-color: #6366f1;
 }
 
 button { 
@@ -46,15 +60,24 @@ button {
     padding: 12px; 
     border: 0; 
     border-radius: 6px; 
-    background: #222; 
+    background: #6366f1; 
     color: white; 
+    font-weight: bold;
     cursor: pointer; 
-
+    transition: background 0.2s ease;
 }
 
 button:hover { 
-    opacity: .9; 
+    background: #4f46e5;
+}
 
+a {
+    color: #818cf8;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 .hidden { 
@@ -63,4 +86,7 @@ button:hover {
 
 #message, #registerMessage { 
     min-height: 20px; 
+    font-size: 14px;
+    margin-top: 10px;
+    color: #f87171; /* Red tone for error status messages */
 }
