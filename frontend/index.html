@@ -1,56 +1,38 @@
+// index.html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login / Sign Up</title>
+  <title>Simple Login</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <main class="card">
-    <!-- Login Section -->
-    <div id="loginSection">
-      <h1>Login</h1>
-      <p class="subtitle">Log in with your account credentials</p>
-
-      <form id="loginForm">
-        <label for="email">Username / Email</label>
-        <input type="email" id="email" placeholder="Email" required autocomplete="email">
-
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
-
-        <button type="submit">Log In</button>
-        <p id="message"></p>
-      </form>
-
-      <p>Don't have an account? <a href="#" id="showSignUp">Sign Up</a></p>
-    </div>
-
-    <!-- Registration Section -->
-    <div id="registerSection" class="hidden">
-      <h2>Sign Up</h2>
-      <p class="subtitle">Create a new account</p>
-
-      <form id="registerForm">
-        <label for="name">Name</label>
-        <input type="text" id="name" placeholder="Name" required autocomplete="name">
-
-        <label for="regEmail">Email</label>
-        <input type="email" id="regEmail" placeholder="Email" required autocomplete="email">
-
-        <label for="regPassword">Password</label>
-        <input type="password" id="regPassword" placeholder="Password (min 6 characters)" required minlength="6" autocomplete="new-password">
-
-        <button type="submit">Sign Up</button>
-        <p id="registerMessage"></p>
-      </form>
-
-      <p>Already have an account? <a href="#" id="showLogin">Log In</a></p>
-    </div>
+    <h1>Welcome Back</h1>
+    <p class="subtitle">Sign in to your account</p>
+    <form id="loginForm">
+      <label>Email</label>
+      <input type="email" id="email" required>
+      <label>Password</label>
+      <input type="password" id="password" required>
+      <button type="submit">Login</button>
+      <p id="message"></p>
+    </form>
+    <p>Don't have an account? <a href="#" id="showRegister">Register</a></p>
+    <form id="registerForm" class="hidden">
+      <h2>Create Account</h2>
+      <label>Name</label>
+      <input type="text" id="name">
+      <label>Email</label>
+      <input type="email" id="regEmail">
+      <label>Password</label>
+      <input type="password" id="regPassword">
+      <button type="submit">Register</button>
+      <p id="registerMessage"></p>
+    </form>
   </main>
-
   <script src="app.js"></script>
 </body>
 </html>
